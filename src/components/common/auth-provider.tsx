@@ -16,22 +16,8 @@ export default function AuthProvider({ children }: Props) {
   const { isAuthenticated, accessToken } = useSelector(userState);
   const [loading, setLoading] = useState(true);
 
-  // Initialize guards
-  // const initializeGuards = async () => {
-  //   const isAuthPath = ["/login", "/register"].includes(path);
-  //   const hasAccess = isAuthenticated && accessToken;
-
-  // if (hasAccess && isAuthPath) {
-  //   await dispatch(getCurrentUser());
-  //   router.replace("/");
-  // } else if (!hasAccess && !isAuthPath) {
-  //   router.replace("/login");
-  // } else {
-  //   setLoading(false);
-  // }
-  // };
-
   useEffect(() => {
+    // Initialize guards
     const initializeGuards = async () => {
       const isAuthPath = ["/login", "/register"].includes(path);
       const hasAccess = isAuthenticated && accessToken;
