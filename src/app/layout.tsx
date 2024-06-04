@@ -3,10 +3,11 @@ import "@/styles/globalicons.css";
 import { Metadata, Viewport } from "next";
 import { siteConfig } from "@/config/site";
 import { fontSans } from "@/config/fonts";
-import { Providers } from "./providers";
 import ReduxProvider from "@/components/common/redux-provider";
 import AuthProvider from "@/components/common/auth-provider";
-import { Navbar } from "@/components/navbar";
+import HttpClientProvider from "@/components/common/http-client-provider";
+import ThemeProvider from "@/components/common/theme-provider";
+
 import clsx from "clsx";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -44,12 +45,16 @@ export default function RootLayout({ children }: Props) {
         )}
       >
         <ReduxProvider>
-          <Providers themeProps={{ attribute: "class", defaultTheme: "light" }}>
-            <AuthProvider>
-              <ToastContainer autoClose={5000} />
-              {children}
-            </AuthProvider>
-          </Providers>
+          <ThemeProvider
+            themeProps={{ attribute: "class", defaultTheme: "light" }}
+          >
+            <HttpClientProvider>
+              <AuthProvider>
+                <ToastContainer autoClose={5000} />
+                {children}
+              </AuthProvider>
+            </HttpClientProvider>
+          </ThemeProvider>
         </ReduxProvider>
       </body>
     </html>

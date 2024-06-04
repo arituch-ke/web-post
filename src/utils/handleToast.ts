@@ -1,13 +1,9 @@
-import { IResponse } from "@/types";
 import { toast } from "react-toastify";
 
+type TypeToast = "success" | "error" | "warning" | "info";
 export default function handleToast(
-  { status, result: { message } }: IResponse,
-  customMessage?: string
+  message: string | undefined,
+  typeToast: TypeToast
 ) {
-  if (status === "ERROR") {
-    return toast.error(message);
-  }
-
-  return toast.success(message ?? customMessage);
+  return toast[typeToast](message);
 }

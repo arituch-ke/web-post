@@ -1,21 +1,17 @@
 import * as userService from "@/services/userService";
 import * as authService from "@/services/authService";
-import { cookies } from "next/headers";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "@/store";
 import { IForm } from "@/types";
+import { IUserModel } from "@/models/user";
 import { IAuthModel } from "@/models/auth";
-import { IUser } from "@/models/user";
-import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY } from "@/utils/constant";
-import httpClient from "@/utils/httpClient";
-import { AxiosRequestConfig } from "axios";
 
 interface IUserState {
   accessToken: string;
   refreshToken: string;
   error?: string;
   status: "fetching" | "success" | "failed" | "init";
-  user: IUser | null;
+  user: IUserModel | null;
   isAuthenticated: boolean;
 }
 
@@ -24,6 +20,7 @@ const initialState: IUserState = {
   refreshToken: "",
   status: "init",
   user: null,
+  error: "",
   isAuthenticated: false,
 };
 
@@ -41,24 +38,18 @@ export const login = createAsyncThunk(
   }
 );
 
-export const logout = createAsyncThunk("user/logout", async () => ({}));
-
-export const getCurrentUser = createAsyncThunk(
-  "user/me",
-  async (_, { getState }) => {
-    httpClient.interceptors.request.use((config?: AxiosRequestConfig | any) => {
-      const reducer = getState() as RootState;
-      const { accessToken } = reducer.userReducer;
-
-      if (accessToken) {
-        config.headers.Authorization = `Bearer ${accessToken}`;
-      }
-      return config;
-    });
-
-    return userService.getCurrentUser();
+export const refreshToken = createAsyncThunk(
+  "user/refreshToken",
+  async (payload: IAuthModel) => {
+    return authService.refreshToken(payload);
   }
 );
+
+export const logout = createAsyncThunk("user/logout", async () => ({}));
+
+export const getCurrentUser = createAsyncThunk("user/me", async () => {
+  return userService.getCurrentUser();
+});
 
 const userSlice = createSlice({
   name: "user",
@@ -81,7 +72,7 @@ const userSlice = createSlice({
       state.status = "fetching";
     });
     builder.addCase(login.fulfilled, (state, action) => {
-      const { accessToken, refreshToken } = action.payload.result as IAuthModel;
+      const { accessToken, refreshToken } = action.payload;
       state.status = "success";
       state.accessToken = accessToken;
       state.refreshToken = refreshToken;
@@ -94,6 +85,24 @@ const userSlice = createSlice({
       state.isAuthenticated = false;
     });
 
+    // Refresh token case
+    builder.addCase(refreshToken.pending, (state, action) => {
+      state.status = "fetching";
+    });
+    builder.addCase(refreshToken.fulfilled, (state, action) => {
+      const { accessToken, refreshToken } = action.payload;
+      state.status = "success";
+      state.accessToken = accessToken;
+      state.refreshToken = refreshToken;
+    });
+    builder.addCase(refreshToken.rejected, (state, action) => {
+      state.status = "failed";
+      state.accessToken = "";
+      state.refreshToken = "";
+      state.isAuthenticated = false;
+      state.user = null;
+    });
+
     // Logout case
     builder.addCase(logout.pending, (state, action) => {
       state.status = "fetching";
@@ -102,6 +111,7 @@ const userSlice = createSlice({
       state.status = "success";
       state.accessToken = "";
       state.refreshToken = "";
+      state.user = null;
       state.isAuthenticated = false;
     });
     builder.addCase(logout.rejected, (state, action) => {
@@ -113,8 +123,7 @@ const userSlice = createSlice({
       state.status = "fetching";
     });
     builder.addCase(getCurrentUser.fulfilled, (state, action) => {
-      const { result } = action.payload;
-      const { user } = result as { user: IUser };
+      const { user } = action.payload;
       state.status = "success";
       state.user = user;
     });

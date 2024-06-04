@@ -1,8 +1,23 @@
-import { IForm, IResponse } from "@/types";
-import httpClient from "@/utils/httpClient";
+import { IForm } from "@/types";
+import { IAuthModel } from "@/models/auth";
+
+// Dynamically import getHttpClient only when needed
+async function getHttpClient() {
+  const httpClientModule = await import(
+    "@/components/common/http-client-provider"
+  );
+  return httpClientModule.getHttpClient();
+}
 
 export const login = async (payload: Omit<IForm, "name">) => {
-  const { data } = await httpClient.post<IResponse>("/auth/login", payload);
+  const httpClient = await getHttpClient();
+  return httpClient.post<Omit<IForm, "name">, IAuthModel>(
+    "/auth/login",
+    payload
+  );
+};
 
-  return data;
+export const refreshToken = async (payload: IAuthModel) => {
+  const httpClient = await getHttpClient();
+  return httpClient.post<IAuthModel, IAuthModel>("/auth/refresh", payload);
 };
