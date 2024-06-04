@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Input } from "@nextui-org/react";
 import { IPropFormInput } from "@/types";
 import { Controller } from "react-hook-form";
+import IconWrapper from "../icon-wrapper";
 
 export default function FormInputSecret({
   name,
@@ -15,12 +16,6 @@ export default function FormInputSecret({
   const [isVisible, setIsVisible] = useState(false);
 
   const toggleVisibility = () => setIsVisible(!isVisible);
-
-  const IconWrapper = ({ children }: { children: React.ReactNode }) => (
-    <div className="material-symbols-outlined text-2xl text-default-400 pointer-events-none">
-      {children}
-    </div>
-  );
 
   return (
     <Controller
