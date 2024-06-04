@@ -1,6 +1,6 @@
 "use client";
 import React, { createContext, useContext } from "react";
-import HttpClient from "@/utils/HttpClient";
+import HttpClient from "@/utils/httpClient";
 
 // Helper function for non-React usage
 export const getHttpClient = () => {
