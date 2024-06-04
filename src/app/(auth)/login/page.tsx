@@ -1,10 +1,9 @@
 "use client";
-
 import FormInputSecret from "@/components/forms/form-input-secret";
 import FormInputText from "@/components/forms/form-input-text";
 import { Button } from "@nextui-org/react";
 import Link from "next/link";
-import React, { useEffect } from "react";
+import React from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -12,7 +11,6 @@ import { useAppDispatch } from "@/store";
 import { login, userState } from "@/store/silces/userSlice";
 import handleToast from "@/utils/handleToast";
 import { useSelector } from "react-redux";
-import { useRouter } from "next/navigation";
 
 interface IFormInput {
   email: string;
@@ -42,9 +40,10 @@ export default function Login({}: Props) {
 
   const onSubmit = async (payload: IFormInput) => {
     const result = await dispatch(login(payload));
-    if (login.fulfilled.match(result)) {
-      handleToast(result.payload, "Login Successfully");
-    }
+    if (login.fulfilled.match(result))
+      handleToast("Login Successfully", "success");
+    else if (login.rejected.match(result))
+      handleToast(result.error.message, "error");
   };
 
   return (
