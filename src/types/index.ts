@@ -1,3 +1,4 @@
+import CustomError from "@/errors/CustomError";
 import { UUID } from "crypto";
 import { SVGProps } from "react";
 
@@ -34,4 +35,21 @@ export interface IPropFormInput {
   size?: "sm" | "md" | "lg";
   formState: any;
   isRequired?: boolean;
+}
+
+export interface ISerializedError {
+  code: null | string;
+  type: string;
+  message: string;
+}
+
+type ErrorConstructor = new (message: string) => CustomError;
+
+export interface ErrorClass extends ErrorConstructor {
+  type: string;
+}
+
+export interface IError {
+  type: string;
+  toJSON(): ISerializedError;
 }
