@@ -32,7 +32,7 @@ export const Navbar = () => {
     dispatch(logout());
   };
 
-  const goTo = (path: string) => router.push(path);
+  const goToNewPost = () => router.push("/new-post");
   return (
     <NextUINavbar
       isBordered
@@ -54,7 +54,7 @@ export const Navbar = () => {
       >
         <NavbarItem className="hidden sm:flex gap-2">
           <Button
-            onClick={() => goTo("/new-post")}
+            onClick={goToNewPost}
             variant="light"
             startContent={<IconWrapper>edit_square</IconWrapper>}
           >
