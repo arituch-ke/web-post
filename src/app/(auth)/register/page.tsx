@@ -53,7 +53,10 @@ export default function Register() {
       password: data.password,
     };
     const result = await dispatch(register(payload));
-    if (register.fulfilled.match(result)) handleToast(result.payload);
+    if (register.fulfilled.match(result))
+      handleToast(result.payload.message, "success");
+    else if (register.rejected.match(result))
+      handleToast(result.error.message, "error");
   };
 
   return (
