@@ -10,3 +10,5 @@ export const formatDate = (date: string) => {
 };
 
 export const currentTimezone = dayjs.tz.guess();
+
+export default dayjs;
