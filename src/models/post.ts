@@ -1,6 +1,6 @@
 import { UUID } from "crypto";
 
-export interface IPost {
+export interface IPostModel {
   id: UUID;
   userId: UUID | null;
   title: string;
