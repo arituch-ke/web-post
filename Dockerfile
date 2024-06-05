@@ -1,16 +1,19 @@
 FROM node:20-alpine AS deps
 WORKDIR /app
 COPY package*.json .
-ENV NODE_ENV production
 RUN yarn install
 
+# Builder stage
 FROM node:20-alpine AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
-COPY . .
+COPY . ./
 RUN yarn build
 
-FROM node:20-alpine
+# Production stage
+FROM node:20-alpine AS production
+ENV NODE_ENV=production
+
 WORKDIR /app
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
