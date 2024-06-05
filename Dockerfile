@@ -3,7 +3,6 @@ FROM node:20-slim AS builder
 WORKDIR /app
 COPY . .
 RUN yarn install --production
-RUN yarn build
 
 # ------- Final Image --------
 FROM node:20-slim
