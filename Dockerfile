@@ -1,16 +1,19 @@
-FROM node:20-slim AS builder
-
+FROM node:20-alpine AS deps
 WORKDIR /app
-COPY . .
-RUN yarn install --production
-
-# ------- Final Image --------
-FROM node:20-slim
+COPY package*.json .
 ENV NODE_ENV production
+RUN yarn install
 
+FROM node:20-alpine AS builder
 WORKDIR /app
-EXPOSE 3000
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+RUN yarn build
 
-COPY --from=builder /app .
-
+FROM node:20-alpine
+WORKDIR /app
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./
 CMD ["yarn", "start"]
