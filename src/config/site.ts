@@ -4,6 +4,6 @@ export const siteConfig = {
   name: "Blog",
   description: "Blog",
   links: {
-    github: "https://github.com/anon-kae",
+    github: "https://github.com/arituch-ke",
   },
 };
